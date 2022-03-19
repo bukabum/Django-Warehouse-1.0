@@ -1,0 +1,191 @@
+{% include "base.html" %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+
+  <br/>
+  <div class="mini_header">
+        <h1 class="list_title">List Produk</h1>
+        <button id="filter_btn" data-toggle="modal" data-target="#filterModal" type="button" class="filter_btn btn btn-success shadow-none">Filter</button>
+        <br/><br/>
+    <div id="card_control" class='row'>
+    {% for spare_list in spare %}
+    <div class="card" style="margin-bottom: 20px;">
+        <img height="140" class="card-img-top" src="{{ spare_list.image.url }}" alt="Card image cap">
+        <div class="card-body">
+        <h5 class="card-title"><b>{{ spare_list.name }}</b></h5>
+        <p class="card-text">{{ spare_list.product_code }}</p>
+        <p class="card-text">Stok: {{ spare_list.stock|intcomma }}</p>
+        <p class="card-text">Rp. {{ spare_list.price|intcomma }}</p>
+        <a href="{% url 'view_saprepart' spare_list.id %}" class="btn btn-primary shadow-none">Lihat Produk</a>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+      <br/>
+
+      {% if spare.has_other_pages %}
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+        
+            {% if spare.has_previous %}
+            <li class="page-item">
+                <a data-page="{{ posts.previous_page_number }}&{{ params }}" href="?page=1&{{ params }}">
+                  <!--<i class="page-link fa fa-angle-double-left"></i>-->
+                  <span class="page-link">&Lt;</span>
+                </a>
+            </li>
+            <li class="page-item">
+                <a data-page="{{ spare.previous_page_number }}&{{ params }}"  href="?page={{ spare.previous_page_number }}&{{ params }}">
+                  <!--<i class="page-link fa fa-angle-left"></i>-->
+                  <span class="page-link">&LT;</span>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                  <!--<i class="page-link fa fa-angle-double-left"></i>-->
+                  <span class="page-link">&Lt;</span>
+            </li>
+            <li class="page-item disabled">
+                  <!--<i class="page-link fa fa-angle-left"></i>-->
+                  <span class="page-link">&LT;</span>
+            </li>
+            {% endif %}
+            
+            {% for i in spare.paginator.page_range %}
+            {% if i == spare.number %}
+                <li class="page-item active">
+                    <span class="page-link">{{ i }} 
+                        <span class="sr-only">(current)</span>
+                    </span>
+                </li>
+            {% elif i > spare.number|add:'-4' and i < spare.number|add:'4' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ i }}&{{ params }}">{{ i }}</a>
+                </li>
+            {% endif %}
+            {% endfor %}
+
+        
+            <!------------Percobaan------------>
+      
+      
+      
+              {% if spare.has_next %}
+                <li class="page-item">
+                  <a data-page="{{spare.next_page_number}}&{{ params }}" href="?page={{ spare.next_page_number }}&{{ params }}">
+                    <!--<i class="page-link fa fa-angle-right"></i>-->
+                    <span class="page-link">&GT;</span>
+                  </a>
+                </li>
+              
+                <li class="page-item">
+                  <a data-page="{{spare.paginator.num_pages}}&{{ params }}" href="?page={{spare.paginator.num_pages}}&{{ params }}">
+                    <!--<i class="page-link fa fa-angle-double-right"></i>-->
+                    <span class="page-link">&Gt;</span>
+                  </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <!--<i class="page-link fa fa-angle-right"></i>-->
+                    <span class="page-link">&GT;</span>
+                  </li>
+                
+                  <li class="page-item disabled">
+                    <!--<i class="page-link fa fa-angle-double-right"></i>-->
+                    <span class="page-link">&Gt;</span>
+                  </li>
+  
+              {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+  </div>  
+<!--Filter Modal-->
+
+<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="filterModalLabel">Filter Produk</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action='{% url "product_list" %}' method = "get">
+            {% csrf_token %}
+            <div class="form-group">
+              {{ spare_filter.form.name|as_crispy_field }}
+            </div>
+            <div class="form-group">
+                {{ spare_filter.form.product_code|as_crispy_field }}
+            </div>
+              <div class="form-group">
+                {{ spare_filter.form.category|as_crispy_field }}
+            </div>
+              <div class="form-group">
+                {{ spare_filter.form.price|as_crispy_field }}
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger shadow-none" data-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-primary shadow-none">Cari Produk</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<style>
+@media only screen and (max-width: 1000px) {
+  .card {
+    width: 80%;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto; 
+  }
+  .mini_header{
+    width: 100%;
+    text-align: center;
+  }
+  .filter_btn{
+      margin-left: auto !important;
+      margin-right: auto !important;
+  }
+}
+@media only screen and (min-width: 1000px) {
+  .card {
+    width: 196px;
+    max-width: 196px;
+    margin-left: 20px; 
+  }
+  .mini_header{
+    max-width: 1110px; 
+    margin-left: auto; 
+    margin-right: auto;
+}
+  .list_title{
+    display: inline-block;
+  }
+}
+
+</style>
+<script>
+if ($(window).width() > 1000) {
+    $("#card_control").addClass("col-md-12");
+    $("#filter_btn").addClass("float-right");
+} else {
+    $("#card_control").removeClass("col-md-12");
+    $("#filter_btn").removeClass("float-right");
+
+}
+$(window).resize(function() {
+    if ($(window).width() > 1000) {
+        $("#card_control").addClass("col-md-12");
+        $("#filter_btn").addClass("float-right");
+    } else {
+    $("#card_control").removeClass("col-md-12");
+    $("#filter_btn").removeClass("float-right");
+}
+});
+
+</script>

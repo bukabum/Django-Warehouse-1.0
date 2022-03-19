@@ -1,0 +1,124 @@
+{% load humanize %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+<script src="https://use.fontawesome.com/49b98aaeb5.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
+
+<div class="container mt-5 mb-3">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="d-flex flex-row p-2"> <img src="{{ logo.logo.url }}" width="48">
+                    <div style="margin-left: 8px;" class="d-flex flex-column"> <span class="font-weight-bold">Bukabum.com</span>  </div>
+                </div>
+                <hr>
+                <div class="table-responsive p-2">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr class="add">
+                                <td>Detail Pesanan</td>
+                                <td>Detail Pengiriman</td>
+                            </tr>
+                            <tr class="content">
+                                <td class="font-weight-bold">Order - {{ order.order_code }}<br>{{ date }}<br>{% if order.paid %}Lunas{% else %}Belum Lunas{% endif %}</td>
+                                <td class="font-weight-bold">{{ order.customer.nama_pelanggan }} <br>{{ order.customer.no_hp }} <br>{{ order.customer.alamat }} <br> {% if order.customer.catatan %}{{ order.customer.catatan }}{% endif %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <div class="products p-2">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr class="add">
+                                <td>Item</td>
+                                <td>Harga Satuan</td>
+                                <td>Jumlah</td>
+                                <td class="text-center">Total</td>
+                            </tr>
+                            {% for item in orderitem %}
+                            <tr class="content">
+                                {% for key, value in item.receipt.items %}
+                                <td>{{ value.name }}</td>
+                                <td>Rp. {{ value.price|intcomma }}</td>
+                                {% endfor %}
+                                <td>{{ item.quantity }}</td>
+                                <td class="text-center">Rp. {{ item.total_price|intcomma }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <div class="products p-2">
+                    <div class="row ml-1">
+                        <div>
+                        </div>
+                        <div class="ml-auto mr-3">
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <tr class="content">
+                                        <td>Total</td>
+                                        <td>Rp. {{ order.total_amount|intcomma }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            </div>
+                      </div>
+                </div>
+                {% if order.paid %}
+                {% else %}
+                <hr>
+                <div class="address p-2">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr class="add">
+                                <td>Silakan Melakukan Pembayaran Ke:</td>
+                            </tr>
+                            <tr class="content">
+                                <td> 
+                                Nama Bank : Bank Central Asia (BCA) <br> Nama Rekening : PT. Bergerak Unggul Makmur <br> Nomor Akun : ..... <br> 
+                                    <br> Atau <br><br>
+                                Nama Bank : Bank Mandiri <br> Nama Rekening : PT. Bergerak Unggul Makmur <br> Nomor Akun : ..... <br> 
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+            <br>
+            <!--<form action="." method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Download</button>-->
+                <button style="background-color: white; border: white; color: white" class="btn btn-primary shadow-none" onclick="window.print()"></button>
+            <!--</form>-->
+        </div>
+    </div>
+</div>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Maven+Pro&display=swap');
+
+body {
+    font-family: 'Maven Pro', sans-serif;
+}
+
+hr {
+    color: #0000004f;
+    margin-top: 5px;
+    margin-bottom: 5px
+}
+
+.add td {
+    color: #c5c4c4;
+    text-transform: uppercase;
+    font-size: 12px
+}
+
+.content {
+    font-size: 14px
+}
+</style>

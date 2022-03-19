@@ -1,0 +1,54 @@
+{% include "base.html" %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+{% if orderitem %}
+<div style="max-width: 1000px; margin-left: auto; margin-right: auto;">
+    <br/>
+    <h1>Keranjang</h1>
+    <br/>
+    {% for order in orderitem %}
+    <div class="card w-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ order.parts.name }}</h5>
+          <p class="card-text">{{ order.parts.product_code }}</p>
+          <p class="card-text">Rp. {{ order.parts.price|intcomma }}</p>
+          <form action="{% url 'update_cart' order.pk %}" method="post">
+            {% csrf_token %}
+          <div class="form-group">
+            <label>Quantity</label>
+            <input name="quantity" value="{{ order.quantity }}" class="form-control" type="number"/>
+          </div>
+          <div class="form-group">
+            <label>Catatan</label>
+            <input name="catatan" value="{{ order.internal_note }}" class="form-control" type="text" />
+          </div>
+          <br/>
+          <a href="{% url 'remove_from_cart' order.pk %}" class="btn btn-danger shadow-none">Hapus</a>
+          <button style="color: white;" type="submit" class="btn btn-success shadow-none">Simpan</button>
+          </form>
+        </div>
+    </div>   
+    <br/>
+    {% endfor %}   
+    <form action="{% url 'request_order' %}" method="post">
+        {% csrf_token %}
+      <div class="form-group">
+        <label>Pelanggan</label>
+        <select name="customer" class="custom-select" required>
+          <option value="" selected>Open this select menu</option>
+          {% for cus in customer %}
+            <option value="{{ cus.pk }}">{{ cus.nama_pelanggan }} - {{ cus.alamat }} - {{ cus.no_hp }} {% if cus.catatan %}- {{ cus.catatan }} {% endif %}</option>
+          {% endfor %}
+        </select>
+        </div>
+      <br/>
+      <button type="submit" class="btn btn-success shadow-none float-right">Request Order</button>
+    </form>
+      {% else %}
+      <br/>
+      <br/>
+      <h1 style="text-align: center;">Keranjang Kosong </h1>
+    {% endif %}
+    <br/>
+    <br/>
+</div>

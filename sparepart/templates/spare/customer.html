@@ -1,0 +1,210 @@
+{% include "base.html" %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+<div class="mini_header">
+
+{% if cus %}
+<br>
+    <h2 class="list_title">Data Pelanggan</h2>   
+
+    {% if cus %}  
+    <button id="all_history_btn" data-toggle="modal" data-target="#filterModal" type="button" class="all_history_btn btn btn-success shadow-none">Filter</button>
+    <a id="filter_btn" href="{% url 'create_customer' %}" style="color: white;" class="filter_btn btn btn-primary shadow-none">Tambah Pelanggan</a>
+    {% endif %}
+<br><br>
+{% for cusm in cus %}
+<div class="card w-100" style="margin-left: auto; margin-right: auto;">
+    <div class="card-body">
+      <h5 class="card-title">{{ cusm.nama_pelanggan }}</h5>
+      <p class="card-text">{{ cusm.no_hp }}</p>
+      <p class="card-text">{{ cusm.alamat }}</p>
+      <p class="card-text">{{ cusm.catatan }}</p>
+      <a href="{% url 'view_customer' cusm.pk %}" style="color: white;" class="btn btn-primary shadow-none">Lihat</a>
+    </div>
+  </div>
+  <br>
+{% endfor %}
+
+{% if cus.has_other_pages %}
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+  
+      {% if cus.has_previous %}
+      <li class="page-item">
+          <a data-page="{{ posts.previous_page_number }}&{{ params }}" href="?page=1&{{ params }}">
+            <!--<i class="page-link fa fa-angle-double-left"></i>-->
+            <span class="page-link">&Lt;</span>
+          </a>
+      </li>
+      <li class="page-item">
+          <a data-page="{{ cus.previous_page_number }}&{{ params }}"  href="?page={{ cus.previous_page_number }}&{{ params }}">
+            <!--<i class="page-link fa fa-angle-left"></i>-->
+            <span class="page-link">&LT;</span>
+          </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+            <!--<i class="page-link fa fa-angle-double-left"></i>-->
+            <span class="page-link">&Lt;</span>
+      </li>
+      <li class="page-item disabled">
+            <!--<i class="page-link fa fa-angle-left"></i>-->
+            <span class="page-link">&LT;</span>
+      </li>
+      {% endif %}
+      
+      {% for i in cus.paginator.page_range %}
+      {% if i == cus.number %}
+          <li class="page-item active">
+              <span class="page-link">{{ i }} 
+                  <span class="sr-only">(current)</span>
+              </span>
+          </li>
+      {% elif i > cus.number|add:'-4' and i < cus.number|add:'4' %}
+          <li class="page-item">
+              <a class="page-link" href="?page={{ i }}&{{ params }}">{{ i }}</a>
+          </li>
+      {% endif %}
+      {% endfor %}
+
+  
+      <!------------Percobaan------------>
+
+
+
+        {% if cus.has_next %}
+          <li class="page-item">
+            <a data-page="{{cus.next_page_number}}&{{ params }}" href="?page={{ cus.next_page_number }}&{{ params }}">
+              <!--<i class="page-link fa fa-angle-right"></i>-->
+              <span class="page-link">&GT;</span>
+            </a>
+          </li>
+        
+          <li class="page-item">
+            <a data-page="{{cus.paginator.num_pages}}&{{ params }}" href="?page={{cus.paginator.num_pages}}&{{ params }}">
+              <!--<i class="page-link fa fa-angle-double-right"></i>-->
+              <span class="page-link">&Gt;</span>
+            </a>
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+              <!--<i class="page-link fa fa-angle-right"></i>-->
+              <span class="page-link">&GT;</span>
+            </li>
+          
+            <li class="page-item disabled">
+              <!--<i class="page-link fa fa-angle-double-right"></i>-->
+              <span class="page-link">&Gt;</span>
+            </li>
+
+        {% endif %}
+          </ul>
+      </nav>
+      {% endif %}
+
+</div>
+
+
+{% else %}
+<br><br><br>
+<h2 style="text-align: center;">Data Pelanggan Kosong</h2>
+<br>
+<div class="row justify-content-center">
+    <a href="{% url 'create_customer' %}" style="color: white;" class="btn btn-primary shadow-none">Tambah Pelanggan</a>
+</div>
+{% endif %}
+</div>
+
+<!--Filter Modal-->
+
+<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="filterModalLabel">Filter Produk</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action='.' method = "get">
+          {% csrf_token %}
+          <div class="form-group">
+            {{ cus_filter.form.nama_pelanggan|as_crispy_field }}
+          </div>
+          <div class="form-group">
+              {{ cus_filter.form.alamat|as_crispy_field }}
+          </div>
+            <div class="form-group">
+              {{ cus_filter.form.no_hp|as_crispy_field }}
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger shadow-none" data-dismiss="modal">Batal</button>
+        <button type="submit" class="btn btn-primary shadow-none">Cari Produk</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+    @media only screen and (max-width: 1000px) {
+      .card {
+        width: 80%;
+        max-width: 80%;
+        margin-left: auto;
+        margin-right: auto; 
+      }
+      .mini_header{
+        width: 100%;
+        text-align: center;
+      }
+      .filter_btn{
+          margin-left: auto !important;
+          margin-right: auto !important;
+      }
+      .all_history_btn{
+          margin-left: auto !important;
+          margin-right: auto !important;
+      }
+    }
+    @media only screen and (min-width: 1000px) {
+      .mini_header{
+        max-width: 1110px; 
+        margin-left: auto; 
+        margin-right: auto;
+    }
+    .all_history_btn{
+        margin-left: 5px;
+    }
+      .list_title{
+        display: inline-block;
+      }
+    }
+    
+    </style>
+    <script>
+    if ($(window).width() > 1000) {
+        $("#card_control").addClass("col-md-12");
+        $("#filter_btn").addClass("float-right");
+        $("#all_history_btn").addClass("float-right");
+    } else {
+        $("#card_control").removeClass("col-md-12");
+        $("#filter_btn").removeClass("float-right");
+        $("#all_history_btn").removeClass("float-right");
+    
+    }
+    $(window).resize(function() {
+        if ($(window).width() > 1000) {
+            $("#card_control").addClass("col-md-12");
+            $("#filter_btn").addClass("float-right");
+            $("#all_history_btn").addClass("float-right");
+        } else {
+        $("#card_control").removeClass("col-md-12");
+        $("#filter_btn").removeClass("float-right");
+        $("#all_history_btn").removeClass("float-right");
+    }
+    });
+    
+    </script>

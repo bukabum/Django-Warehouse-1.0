@@ -1,0 +1,50 @@
+{% load crispy_forms_tags %}
+{% include "base.html" %}
+<br/>
+  <br/>
+    <div style="max-width: 80%; margin-left: auto; margin-right: auto;">
+      <h2>Tambah Produk Baru</h2>
+      <br/>
+        <form enctype="multipart/form-data" action="." method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="name">Nama Barang</label>
+            {{ form.name }}
+          </div>
+          <br/>
+          <div class="form-group">
+            <label for="name">Deskripsi Barang</label>
+            {{ form.description }}
+          </div>
+          <br/>
+          <div class="form-group">
+            <label for="name">Jumlah Stock</label>
+            {{ form.stock }}
+          </div>
+          <br/>
+          <div class="form-group">
+            <label for="name">Harga Barang</label>
+            {{ form.price }}
+          </div>
+          <br/>
+          <div class="form-group">
+            <label for="exampleFormControlSelect1">Kategori Barang</label>
+            {{ form.category }}
+          </div>
+          <br/>
+          <!--<div class="form-group">
+            <label for="name">Kode Barang</label>
+            {{ form.product_code }}
+          </div>
+          <br/>-->
+          <div class="form-group">
+            <label for="name">Foto Barang</label>
+            <br/>
+            {{ form.image }}
+          </div>
+          <br/><br/>
+          <a href="{% url 'product_list' %}" style="color: white;" class="btn btn-primary shadow-none">Lihat List Produk</a>
+          <button class="btn btn-primary float-right shadow-none" value="submit" type="submit">Kirim</button>
+        </form>
+    </div>
+

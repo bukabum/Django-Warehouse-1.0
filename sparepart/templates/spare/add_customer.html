@@ -1,0 +1,32 @@
+{% include "base.html" %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+<br>
+<div style="max-width: 1000px; margin-left: auto; margin-right: auto;">
+    <h4>Input Data Pelanggan</h4>
+    <br>
+    <form action="." method="post">
+        {% csrf_token %}
+      <div class="form-group">
+        <label>Nama Penerima</label>
+        <input required name="penerima" class="form-control" type="text"/>
+      </div>
+      <div class="form-group">
+        <label>Alamat Pengiriman</label>
+        <input required name="alamat" class="form-control" type="text" />
+      </div>
+      <div class="form-group">
+        <label>No HP</label>
+        <input required name="no_hp" class="form-control" type="number" />
+      </div>
+      <div class="form-group">
+        <label>Catatan</label>
+        <textarea name="catatan" class="form-control" type="text"></textarea>
+      </div>
+      <br/>
+      <button type="submit" class="btn btn-success shadow-none float-right">Submit</button>
+    </form>
+    <b style="color: red;">* Format Urutan Penulisan Alamat -> Nama Jalan, Nomor Bangunan, Kecmatan, Kota, Provinsi, Kode Pos</b>
+    <br>
+    <b style="color: red;">** Catatan Digunakan Apabila ada informasi khusus mengenai alamat pelanggan</b>
+</div>

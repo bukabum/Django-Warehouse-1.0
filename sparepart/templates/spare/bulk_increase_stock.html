@@ -1,0 +1,48 @@
+{% include "base.html" %}
+{% load humanize %}
+<!--<link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+<script>
+    $( function() {
+      var availableTags = [
+          {% for spares in spare %}
+            "{{ spares.product_code }}",
+          {% endfor %}
+      ];
+      $( "#tags" ).autocomplete({
+        source: availableTags
+        
+      });
+      $( "#sparepart_name" ).val("Glenn Quagmire");
+    } );
+    
+    </script>  
+<br/>
+<div style="max-width: 80%; margin-left: auto; margin-right: auto;">
+    <h2>Tambah Stock (Bulk)</h2>
+    <br/>
+    <form enctype="multipart/form-data" action="." method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="name">Kode Produk</label>
+        <input id="tags" type="text" class="form-control" name="sparepart_name">
+    </div>
+    <div class="form-group">
+        <label for="name">Nama Produk</label>
+        <input disabled id="sparepart_name" type="text" class="form-control" name="sparepart_name">
+    </div>
+    <div class="form-group">
+        <label for="name">Stock Masuk</label>
+        <input required type="number" class="form-control" name="stock_in">
+    </div>
+    <div class="form-group">
+        <label for="name">Keterangan / Alasan</label>
+        <textarea required rows="10" class="form-control" name="keterangan"></textarea>
+    </div>
+    <br/>
+    <a style="color: white;" class="btn btn-primary shadow-none">+ Tambah Produk</a>
+    <button class="btn btn-primary float-right shadow-none" value="submit" type="submit">Kirim</button>
+    </form>
+</div>-->

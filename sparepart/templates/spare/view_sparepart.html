@@ -1,0 +1,114 @@
+{% include "base.html" %}
+{% load humanize %}
+<br/>
+<div class="card" style="max-width: 1000px; margin-left: auto; margin-right: auto;">
+    <img class="card-img-top" src="{{ spare.image.url }}" alt="Card image cap">
+    <div class="card-body">
+        <h5 class="card-title"><b>Nama Barang</b></h5>
+        <p class="card-text">{{ spare.name }}</p>
+        <h5 class="card-title"><b>Deskripsi Barang</b></h5>
+        <p class="card-text">{{ spare.description }}</p>
+        <h5 class="card-title"><b>Stok Barang</b></h5>
+        <p class="card-text">{{ spare.stock|intcomma }}</p>
+        <h5 class="card-title"><b>Harga Barang</b></h5>
+        <p class="card-text">Rp. {{ spare.price|intcomma }}</p>
+        <h5 class="card-title"><b>Kode Barang</b></h5>
+        <p class="card-text">{{ spare.product_code }}</p>
+        <h5 class="card-title"><b>QR Code</b></h5>
+        <img height="350" width="350" src="{{ spare.qrcode.url }}">
+        <br/>
+        <!--<button data-toggle="modal" data-target="#deleteModal" class="btn btn-danger shadow-none">Hapus Produk</button>-->
+        {% if user.is_authenticated %}
+            <div style="margin-right: auto; margin-left: auto;">
+                <button data-toggle="modal" data-target="#editModal" class="btn btn-primary shadow-none">Edit</button>
+                <a href="{% url 'stock_out' spare.id %}"><button style="margin-left: 1px;" class="btn btn-primary shadow-none">Produk Keluar</button></a>
+                <a href="{% url 'stock_in' spare.id %}"><button style="margin-left: 1px;" class="btn btn-primary shadow-none">Produk Masuk</button></a>
+                <a href="{% url 'stock_history' spare.id %}"><button style="margin-left: 1px;" class="btn btn-primary shadow-none">History</button></a>
+                <a href="{% url 'add_to_cart' spare.id %}"><button style="margin-left: 1px;" class="btn btn-success shadow-none">+ Keranjang</button></a>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+<br/>
+
+<!--- Modal Edit Produk ---->
+
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Edit Produk</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action='{% url "update_product" spare.id %}' method = "post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Nama Produk:</label>
+              <input type="text" class="form-control" name="sparepart_name" value="{{ spare.name }}">
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlSelect1">Kategori Barang</label>
+                <select name="category" class="form-control" aria-label="Default select example">
+                    <option value="{{ spare.category.pk }}" selected>{{ spare.category.name }}</option>
+                    {% for cat in category %}
+                        <option value="{{ cat.pk }}">{{ cat.name }}</option>
+                    {% endfor %}
+                  </select>
+                                </div>    
+            <div class="form-group">
+                <label for="message-text" class="col-form-label">Deskripsi Produk:</label>
+                <textarea class="form-control" name="sparepart_description">{{ spare.description }}</textarea>
+              </div>
+              <div class="form-group">
+                <label for="message-text" class="col-form-label">Stok Produk:</label>
+                <input disabled type="number" class="form-control" name="sparepart_stock" value="{{ spare.stock }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="message-text" class="col-form-label">Harga Produk:</label>
+                <input type="number" class="form-control" name="sparepart_price" value="{{ spare.price }}">
+            </div>
+            <div class="form-group">
+                <label for="message-text" class="col-form-label">Harga Promo:</label>
+                <input type="number" class="form-control" name="promo_price" value="{{ spare.promo_price }}">
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger shadow-none" data-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-primary shadow-none">Edit Produk</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+<!--- Modal Hapus Produk ---->
+
+<!--<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Hapus Barang ?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Apakah anda yakin untuk menghapus barang ?</p>
+          <p>Barang yang sudah dihapus tidak bisa dikembalikan</p>
+        </div>
+        <div class="modal-footer">
+          <form action="." method = "post">
+            {% csrf_token %}
+            <button class="btn btn-primary shadow-none" data-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-danger shadow-none">Hapus</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>-->
+  

@@ -1,0 +1,158 @@
+{% include "base.html" %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+
+<br/>
+<div class="mini_header">
+    <h1 class="list_title">Stock History {% now "Y/m" %}</h1>
+    <a href="{% url 'all_stock_history' spare.pk %}" style="color: white;" id="all_history_btn" class="all_history_btn btn btn-primary shadow-none">Semua History</a>
+    <button id="filter_btn" data-toggle="modal" data-target="#filterModal" type="button" class="filter_btn btn btn-success shadow-none">Filter</button>
+    <br/><br/>
+<table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Tanggal</th>
+            <th scope="col">Stock Awal</th>
+            <th scope="col">Stock Akhir</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">{{ spare.date_added }}</th>
+            <td>{{ spare.first_stock }}</td>
+            <td>{{ spare.stock }}</td>
+          </tr>
+        </tbody>
+      </table>
+    {% if stock %}
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Tanggal</th>
+            <th scope="col">Keterangan</th>
+            <th scope="col">Masuk</th>
+            <th scope="col">Keluar</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Penanggung Jawab</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for stocks in stock_filter.qs %}
+          <tr>
+            <th scope="row">{{ stocks.date_added }}</th>
+            <td>{{ stocks.description }}</td>
+            <td>{{ stocks.stockin }}</td>
+            <td>{{ stocks.stockout }}</td>
+            <td>{{ stocks.stock }}</td>
+            <td>{{ stocks.person_responsible }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <br/>
+      <h5 style="text-align: center;"><b>Tidak ada hisory stock</b></h5>
+      {% endif %}
+</div>
+
+<!--Filter Modal-->
+
+<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="filterModalLabel">Filter History</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action='{% url "stock_history" spare.pk %}' method = "get">
+            {% csrf_token %}
+            <!--<div class="form-group">
+                {{ stock_filter.form.start_date }}
+              </div>
+              <div class="form-group">
+                {{ stock_filter.form.end_date }}
+              </div>
+              <div class="form-group">
+                {{ stock_filter.form.date_range }}
+              </div>-->
+              <div class="form-group">
+                {{ stock_filter.form.date_range|as_crispy_field }}
+              </div>
+              </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger shadow-none" data-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-primary shadow-none">Cari History</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<style>
+    @media only screen and (max-width: 1000px) {
+      .card {
+        width: 80%;
+        max-width: 80%;
+        margin-left: auto;
+        margin-right: auto; 
+      }
+      .mini_header{
+        width: 100%;
+        text-align: center;
+      }
+      .filter_btn{
+          margin-left: auto !important;
+          margin-right: auto !important;
+      }
+      .all_history_btn{
+          margin-left: auto !important;
+          margin-right: auto !important;
+      }
+    }
+    @media only screen and (min-width: 1000px) {
+      .card {
+        width: 196px;
+        max-width: 196px;
+        margin-left: 20px; 
+      }
+      .mini_header{
+        max-width: 1110px; 
+        margin-left: auto; 
+        margin-right: auto;
+    }
+    .all_history_btn{
+        margin-left: 5px;
+    }
+      .list_title{
+        display: inline-block;
+      }
+    }
+    
+    </style>
+    <script>
+    if ($(window).width() > 1000) {
+        $("#card_control").addClass("col-md-12");
+        $("#filter_btn").addClass("float-right");
+        $("#all_history_btn").addClass("float-right");
+    } else {
+        $("#card_control").removeClass("col-md-12");
+        $("#filter_btn").removeClass("float-right");
+        $("#all_history_btn").removeClass("float-right");
+    
+    }
+    $(window).resize(function() {
+        if ($(window).width() > 1000) {
+            $("#card_control").addClass("col-md-12");
+            $("#filter_btn").addClass("float-right");
+            $("#all_history_btn").addClass("float-right");
+        } else {
+        $("#card_control").removeClass("col-md-12");
+        $("#filter_btn").removeClass("float-right");
+        $("#all_history_btn").removeClass("float-right");
+    }
+    });
+    
+    </script>

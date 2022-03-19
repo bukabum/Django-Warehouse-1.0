@@ -1,0 +1,295 @@
+{% include "base.html" %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+<div style="max-width: 1000px; margin-left: auto; margin-right: auto;">
+    <br>
+        <h2>Pelanggan</h2>
+    <br>
+    <div class="card w-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ cus.nama_pelanggan }}</h5>
+          <p class="card-text">{{ cus.no_hp }}</p>
+          <p class="card-text">{{ cus.alamat }}</p>
+          <p class="card-text">{{ cus.catatan }}</p>
+          <button data-toggle="modal" data-target="#exampleModal" class="btn btn-primary shadow-none">Edit Data </button>
+        </div>
+      </div>
+        <br>
+        {% if order %}
+            <h2 class="list_title">Sejarah Transaksi</h2>
+            <button id="filter_btn" data-toggle="modal" data-target="#filterModal" type="button" class="filter_btn btn btn-success shadow-none">Filter</button>
+        <br>
+        {% for lists in order %}
+            <div class="card w-100">
+                <div class="card-body">
+                <h5 class="card-title">Order - <a href="{% url 'view_order' lists.pk %}">{{ lists.order_code }}</a></h5>
+                <div class="products p-2">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr class="add">
+                                <td>Item</td>
+                                <td>Harga Satuan</td>
+                                <td>Jumlah</td>
+                                <td class="text-center">Total</td>
+                            </tr>
+                            {% for item in lists.orderitem_set.all %}
+                            <tr class="content">
+                                {% for key, value in item.receipt.items %}
+                                <td>{{ value.name }}</td>
+                                <td>Rp. {{ value.price|intcomma }}</td>
+                                {% endfor %}
+                                <td>{{ item.quantity }}</td>
+                                <td class="text-center">Rp. {{ item.total_price|intcomma }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <div class="products p-2">
+                    <div class="row ml-1">
+                        <div>
+                        </div>
+                        <div class="ml-auto mr-3">
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <tr class="content">
+                                        <td>Total:</td>
+                                        <td>Rp. {{ lists.total_amount|intcomma }}</td>
+                                    </tr>
+                                    <tr class="content">
+                                        <td>Status:</td>
+                                        <td>{% if lists.paid %}Lunas{% else %}Belum Lunas{% endif %}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            </div>
+                      </div>
+                </div>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+
+        {% if order.has_other_pages %}
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
+          
+              {% if order.has_previous %}
+              <li class="page-item">
+                  <a data-page="{{ posts.previous_page_number }}&{{ params }}" href="?page=1&{{ params }}">
+                    <!--<i class="page-link fa fa-angle-double-left"></i>-->
+                    <span class="page-link">&Lt;</span>
+                  </a>
+              </li>
+              <li class="page-item">
+                  <a data-page="{{ order.previous_page_number }}&{{ params }}"  href="?page={{ order.previous_page_number }}&{{ params }}">
+                    <!--<i class="page-link fa fa-angle-left"></i>-->
+                    <span class="page-link">&LT;</span>
+                  </a>
+              </li>
+              {% else %}
+              <li class="page-item disabled">
+                    <!--<i class="page-link fa fa-angle-double-left"></i>-->
+                    <span class="page-link">&Lt;</span>
+              </li>
+              <li class="page-item disabled">
+                    <!--<i class="page-link fa fa-angle-left"></i>-->
+                    <span class="page-link">&LT;</span>
+              </li>
+              {% endif %}
+              
+              {% for i in order.paginator.page_range %}
+              {% if i == order.number %}
+                  <li class="page-item active">
+                      <span class="page-link">{{ i }} 
+                          <span class="sr-only">(current)</span>
+                      </span>
+                  </li>
+              {% elif i > order.number|add:'-4' and i < order.number|add:'4' %}
+                  <li class="page-item">
+                      <a class="page-link" href="?page={{ i }}&{{ params }}">{{ i }}</a>
+                  </li>
+              {% endif %}
+              {% endfor %}
+    
+          
+              <!------------Percobaan------------>
+        
+        
+        
+                {% if order.has_next %}
+                  <li class="page-item">
+                    <a data-page="{{order.next_page_number}}&{{ params }}" href="?page={{ order.next_page_number }}&{{ params }}">
+                      <!--<i class="page-link fa fa-angle-right"></i>-->
+                      <span class="page-link">&GT;</span>
+                    </a>
+                  </li>
+                
+                  <li class="page-item">
+                    <a data-page="{{order.paginator.num_pages}}&{{ params }}" href="?page={{order.paginator.num_pages}}&{{ params }}">
+                      <!--<i class="page-link fa fa-angle-double-right"></i>-->
+                      <span class="page-link">&Gt;</span>
+                    </a>
+                  </li>
+                  {% else %}
+                  <li class="page-item disabled">
+                      <!--<i class="page-link fa fa-angle-right"></i>-->
+                      <span class="page-link">&GT;</span>
+                    </li>
+                  
+                    <li class="page-item disabled">
+                      <!--<i class="page-link fa fa-angle-double-right"></i>-->
+                      <span class="page-link">&Gt;</span>
+                    </li>
+    
+                {% endif %}
+                  </ul>
+              </nav>
+              {% endif %}
+    
+
+        {% else %}
+        <br>
+        <h2 style="text-align: center;">Belum Ada Sejarah Transaksi</h2>
+        {% endif %}
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Edit Data Pelanggan</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form method="post" action=".">
+        {% csrf_token %}
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Nama Peanggan</label>
+                <input value="{{ cus.nama_pelanggan }}" required name="nama_pemesan" class="form-control" type="text"/>
+              </div>
+              <div class="form-group">
+                <label>Alamat</label>
+                <input value="{{ cus.alamat }}" required name="alamat" class="form-control" type="text"/>
+              </div>
+              <div class="form-group">
+                <label>No HP</label>
+                <input value="{{ cus.no_hp }}" required name="no_hp" class="form-control" type="number"/>
+              </div>
+              <div class="form-group">
+                <label>Catatan</label>
+                <input value="{{ cus.catatan }}" name="catatan" class="form-control" type="text"/>
+              </div>
+              <b style="color: red;">* Format Urutan Penulisan Alamat -> Nama Jalan, Nomor Bangunan, Kecmatan, Kota, Provinsi, Kode Pos</b>
+              <br><br>
+              <b style="color: red;">** Catatan Digunakan Apabila ada informasi khusus mengenai alamat pelanggan</b>
+          
+                        
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+          <button type="submit" class="btn btn-primary">Perbarui</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!--Filter Modal-->
+
+<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="filterModalLabel">Filter Produk</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action='.' method = "get">
+          {% csrf_token %}
+          <div class="form-group">
+            {{ order_filter.form.detail_penerima|as_crispy_field }}
+          </div>
+          <div class="form-group">
+              {{ order_filter.form.total_amount|as_crispy_field }}
+          </div>
+            <div class="form-group">
+              {{ order_filter.form.request_order|as_crispy_field }}
+          </div>
+          <div class="form-group">
+              {{ order_filter.form.paid|as_crispy_field }}
+          </div>
+          <div class="form-group">
+              {{ order_filter.form.cancel|as_crispy_field }}
+          </div>
+          <div class="form-group">
+              {{ order_filter.form.retur|as_crispy_field }}
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger shadow-none" data-dismiss="modal">Batal</button>
+        <button type="submit" class="btn btn-primary shadow-none">Cari Produk</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  @media only screen and (max-width: 1000px) {
+    .card {
+      width: 80%;
+      max-width: 80%;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .mini_header{
+      width: 100%;
+      text-align: center;
+    }
+    .filter_btn{
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+  }
+  @media only screen and (min-width: 1000px) {
+    .mini_header{
+      max-width: 1110px; 
+      margin-left: auto; 
+      margin-right: auto;
+  }
+    .list_title{
+      display: inline-block;
+    }
+  }
+  
+  </style>
+  <script>
+  if ($(window).width() > 1000) {
+      $("#card_control").addClass("col-md-12");
+      $("#filter_btn").addClass("float-right");
+  } else {
+      $("#card_control").removeClass("col-md-12");
+      $("#filter_btn").removeClass("float-right");
+  
+  }
+  $(window).resize(function() {
+      if ($(window).width() > 1000) {
+          $("#card_control").addClass("col-md-12");
+          $("#filter_btn").addClass("float-right");
+      } else {
+      $("#card_control").removeClass("col-md-12");
+      $("#filter_btn").removeClass("float-right");
+  }
+  });
+  
+  </script>
